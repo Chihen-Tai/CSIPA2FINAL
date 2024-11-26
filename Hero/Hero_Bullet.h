@@ -4,6 +4,7 @@
 #include "../Object.h"
 #include <allegro5/bitmap.h>
 #include <string>
+#include <iostream>
 
 class Hero_Bullet : public Object
 {

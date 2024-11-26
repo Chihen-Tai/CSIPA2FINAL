@@ -8,7 +8,7 @@
 #include "../shapes/Point.h"
 #include "../shapes/Circle.h"
 #include "Hero_Bullet.h"
-
+#include "../data/ImageCenter.h"
 namespace HeroSetting
 {
     static constexpr char gif_root_path[40] = {
@@ -74,6 +74,14 @@ void Hero::update()
         shape->update_center_x(shape->center_x() + speed);
         state = HeroState::RIGHT;
     }
+    if(counter > 0)
+    {
+        counter--;
+    }
+    if(DC->key_state[ALLEGRO_KEY_SPACE] && counter == 0)
+    {
+        attack(nullptr);
+    }
 }
 
 Hero_Bullet *Hero::create_bullet(Object *target)
@@ -81,10 +89,11 @@ Hero_Bullet *Hero::create_bullet(Object *target)
     DataCenter *DC = DataCenter::get_instance();
     const Point &p = Point(shape->center_x(), shape->center_y());
     const Point &t = DC->mouse;
-    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path, 10, 10, 100);
+    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path, 1, 1, 100000);
 }
 bool Hero::attack(Object *target)
 {
+    std::cout<<"attack"<<std::endl;
     SoundCenter *SC = SoundCenter::get_instance();
     SC->play(HeroSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
     DataCenter *DC = DataCenter::get_instance();

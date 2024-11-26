@@ -4,6 +4,7 @@
 #include "../Object.h"
 #include <map>
 #include <string>
+#include <iostream>
 #include <allegro5/allegro.h>
 #include "Hero_Bullet.h"
 
