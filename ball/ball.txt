@@ -1,0 +1,46 @@
+#include "ball.h"
+#include "../data/DataCenter.h"
+#include "../data/ImageCenter.h"
+#include "../shapes/Circle.h"
+#include <allegro5/bitmap_draw.h>
+#include "Normall.h"
+
+namespace BallSetting
+{
+    static constexpr char png_root_path[40] = {
+        "../assets/image/ball/IDR_GIF3.png",
+    };
+};
+
+ALLEGRO_BITMAP*
+ball::get_bitmap(BallState type)
+{
+    ImageCenter *IC = ImageCenter::get_instance();
+    return IC->get(BallSetting::png_root_path[static_cast<int>(type)]);
+}
+
+ball* ball::ball_create(const Point &p, BallState type)
+{
+    switch (type)
+    {
+        case BallState::NORMAL:
+            return new Normal(p, type);
+    }
+}
+
+void Ball::update()
+{
+    DataCenter *DC = DataCenter::get_instance();
+    double dx = vx / DC->FPS;
+    double dy = vy / DC->FPS;
+    shape->update_center_x(shape->center_x() + dx);
+    shape->update_center_y(shape->center_y() + dy);
+}
+
+void
+Tower::draw() {
+	al_draw_bitmap(
+		bitmap,
+		shape->center_x() - al_get_bitmap_width(bitmap)/2,
+		shape->center_y() - al_get_bitmap_height(bitmap)/2, 0);
+}

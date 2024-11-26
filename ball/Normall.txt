@@ -1,0 +1,17 @@
+#ifndef NORMAL_H_INCLUDED
+#define NORMAL_H_INCLUDED
+
+#include "ball.h"
+#include  "../shapes/Circle.h"
+#include  "../shapes/Point.h"
+
+class Normal : public Ball
+{
+    public:
+        Normal(const Point &p):Ball(p, BallState::NORMAL)
+        {
+            shape.reset(new Circle{p.x, p.y, 10});
+        }
+};
+
+#endif // NORMAL_H_INCLUDED
