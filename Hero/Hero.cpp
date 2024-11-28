@@ -78,7 +78,7 @@ void Hero::update()
     {
         counter--;
     }
-    if(DC->key_state[ALLEGRO_KEY_SPACE] && counter == 0)
+    if(counter == 0)
     {
         attack(nullptr);
     }
@@ -89,11 +89,11 @@ Hero_Bullet *Hero::create_bullet(Object *target)
     DataCenter *DC = DataCenter::get_instance();
     const Point &p = Point(shape->center_x(), shape->center_y());
     const Point &t = DC->mouse;
-    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path, 1, 1, 100000);
+    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path, 150, 1, 100000);
 }
 bool Hero::attack(Object *target)
 {
-    std::cout<<"attack"<<std::endl;
+    //std::cout<<"attack"<<std::endl;
     SoundCenter *SC = SoundCenter::get_instance();
     SC->play(HeroSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
     DataCenter *DC = DataCenter::get_instance();

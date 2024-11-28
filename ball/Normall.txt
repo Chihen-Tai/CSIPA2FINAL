@@ -7,11 +7,16 @@
 
 class Normal : public Ball
 {
-    public:
-        Normal(const Point &p):Ball(p, BallState::NORMAL)
-        {
-            shape.reset(new Circle{p.x, p.y, 10});
-        }
+public:
+Normal(const std::vector<Point> &path) : Ball{path, BallState::NORMAL} {
+        bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // UP
+        bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // DOWN
+        bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // LEFT
+        bitmap_img_ids.emplace_back(std::vector<int>({0, 1, 2, 3})); // RIGHT
+        bitmap_switch_freq = 20;
+}
 };
+
+
 
 #endif // NORMAL_H_INCLUDED

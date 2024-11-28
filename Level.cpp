@@ -2,10 +2,12 @@
 #include <string>
 #include "Utils.h"
 #include "monsters/Monster.h"
+#include "ball/Ball.h"
 #include "data/DataCenter.h"
 #include <allegro5/allegro_primitives.h>
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
+#include "shapes/Circle.h"
 #include <array>
 
 using namespace std;
@@ -18,6 +20,7 @@ namespace LevelSetting {
 		40, 40, 40, 40
 	};
 	constexpr int monster_spawn_rate = 90;
+	constexpr int ball_spawn_rate = 10;
 };
 
 void
@@ -87,6 +90,7 @@ Level::update() {
 		break;
 	}
 	monster_spawn_counter = LevelSetting::monster_spawn_rate;
+	
 }
 
 void
@@ -117,4 +121,11 @@ Level::grid_to_region(const Point &grid) const {
 	int x2 = x1 + LevelSetting::grid_size[level];
 	int y2 = y1 + LevelSetting::grid_size[level];
 	return Rectangle{x1, y1, x2, y2};
+}
+
+Circle
+Level::grid_to_region(const Point &grid, const int &r) const {
+	int x = grid.x * LevelSetting::grid_size[level] + LevelSetting::grid_size[level] / 2;
+	int y = grid.y * LevelSetting::grid_size[level] + LevelSetting::grid_size[level] / 2;
+	return Circle{x, y, r};
 }

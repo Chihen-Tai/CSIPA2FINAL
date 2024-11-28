@@ -28,6 +28,7 @@ public:
 		for(const int &i : num_of_monsters) res += i;
 		return res;
 	}
+	Circle grid_to_region(const Point &grid, const int &r) const;
 private:
 	/**
 	 * @brief Stores the monster's attack route, whose Point is represented in grid format.
@@ -52,6 +53,7 @@ private:
 	/**
 	 * @brief Number of each different type of monsters.
 	 */
+	int ball_spawn_counter=10;
 	std::vector<int> num_of_monsters;
 };
 

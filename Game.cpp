@@ -10,7 +10,7 @@
 
 
 #include "Hero/Hero.h"
-
+#include "ball/Ball.h"
 
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -139,6 +139,7 @@ Game::game_init() {
 
 	DC->hero->init();
 
+    DC->ball->init();
 	// game start
 	background = IC->get(background_img_path);
 	debug_log("Game state: change to START\n");

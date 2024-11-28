@@ -5,7 +5,7 @@
 #include "../towers/Bullet.h"
 #include "../Player.h"
 #include "../Hero/Hero.h"
-
+#include "../ball/ball.h"	
 void OperationCenter::update() {
 	// Update monsters.
 	_update_monster();
@@ -19,8 +19,15 @@ void OperationCenter::update() {
 	_update_monster_player();
 
 	_update_monster_hero();
-}
 
+	_update_heroBullet();
+
+	_update_ball();
+}
+void OperationCenter::_update_ball() {
+	DataCenter *DC = DataCenter::get_instance();
+	DC->ball->update();
+}
 void OperationCenter::_update_monster() {
 	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
 	for(Monster *monster : monsters)
@@ -99,11 +106,17 @@ void OperationCenter::_update_monster_hero() {
 }
 
 void OperationCenter::draw() {
+	_draw_ball();
 	_draw_monster();
 	_draw_tower();
 	_draw_towerBullet();
+	_draw_heroBullet();
+	
 }
-
+void OperationCenter::_draw_ball() {
+	DataCenter *DC = DataCenter::get_instance();
+	DC->ball->draw();
+}
 void OperationCenter::_draw_monster() {
 	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
 	for(Monster *monster : monsters)
@@ -120,4 +133,16 @@ void OperationCenter::_draw_towerBullet() {
 	std::vector<Bullet*> &towerBullets = DataCenter::get_instance()->towerBullets;
 	for(Bullet *towerBullet : towerBullets)
 		towerBullet->draw();
+}
+
+void OperationCenter::_draw_heroBullet() {
+	std::vector<Hero_Bullet*> &heroBullets = DataCenter::get_instance()->heroBullets;
+	for(Hero_Bullet *heroBullet : heroBullets)
+		heroBullet->draw();
+}
+
+void OperationCenter::_update_heroBullet() {
+	std::vector<Hero_Bullet*> &heroBullets = DataCenter::get_instance()->heroBullets;
+	for(Hero_Bullet *heroBullet : heroBullets)
+		heroBullet->update();
 }

@@ -8,12 +8,12 @@
 /*-----------------*/
 #include "../Hero/Hero.h"
 #include "../Hero/Hero_Bullet.h"
-
+#include "../ball/ball.h"	
 // fixed settings
 namespace DataSetting {
 	constexpr double FPS = 60;
-	constexpr int window_width = 800;
-	constexpr int window_height = 600;
+	constexpr int window_width = 1280;
+	constexpr int window_height = 800;
 	constexpr int game_field_length = 600;
 }
 
@@ -31,6 +31,7 @@ DataCenter::DataCenter() {
 	level = new Level();
 	/*-----------------*/
 	hero = new Hero();
+	ball = new Ball(); 
 }
 
 DataCenter::~DataCenter() {
@@ -43,6 +44,9 @@ DataCenter::~DataCenter() {
 		delete t;
 	}
 	for(Bullet *&b : towerBullets) {
+		delete b;
+	}
+	for(Hero_Bullet *&b : heroBullets) {
 		delete b;
 	}
 }
