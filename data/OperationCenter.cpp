@@ -25,8 +25,9 @@ void OperationCenter::update() {
 	_update_ball();
 }
 void OperationCenter::_update_ball() {
-	DataCenter *DC = DataCenter::get_instance();
-	DC->ball->update();
+	std::vector<Ball*> &balls = DataCenter::get_instance()->balls;
+	for(Ball *ball : balls)
+		ball->update();
 }
 void OperationCenter::_update_monster() {
 	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;
@@ -114,8 +115,9 @@ void OperationCenter::draw() {
 	
 }
 void OperationCenter::_draw_ball() {
-	DataCenter *DC = DataCenter::get_instance();
-	DC->ball->draw();
+	std::vector<Ball*> &balls = DataCenter::get_instance()->balls;
+	for(Ball *ball : balls)
+		ball->draw();
 }
 void OperationCenter::_draw_monster() {
 	std::vector<Monster*> &monsters = DataCenter::get_instance()->monsters;

@@ -14,7 +14,7 @@ namespace DataSetting {
 	constexpr double FPS = 60;
 	constexpr int window_width = 1280;
 	constexpr int window_height = 800;
-	constexpr int game_field_length = 600;
+	constexpr int game_field_length = 800;
 }
 
 DataCenter::DataCenter() {
@@ -31,7 +31,6 @@ DataCenter::DataCenter() {
 	level = new Level();
 	/*-----------------*/
 	hero = new Hero();
-	ball = new Ball(); 
 }
 
 DataCenter::~DataCenter() {
@@ -47,6 +46,9 @@ DataCenter::~DataCenter() {
 		delete b;
 	}
 	for(Hero_Bullet *&b : heroBullets) {
+		delete b;
+	}
+	for(Ball *&b : balls) {
 		delete b;
 	}
 }

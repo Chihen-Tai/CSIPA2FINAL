@@ -138,8 +138,6 @@ Game::game_init() {
 	DC->level->init();
 
 	DC->hero->init();
-
-    DC->ball->init();
 	// game start
 	background = IC->get(background_img_path);
 	debug_log("Game state: change to START\n");

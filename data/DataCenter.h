@@ -87,7 +87,11 @@ public:
 	 */
 	Hero *hero;
 
-	Ball *ball;
+	std::vector<Ball*> balls;
+	/**
+	 * @brief Raw list of Monster objects.
+	 * @see Monster
+	 */
 	std::vector<Monster*> monsters;
 	/**
 	 * @brief Raw list of Tower objects.

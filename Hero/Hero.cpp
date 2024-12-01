@@ -9,6 +9,7 @@
 #include "../shapes/Circle.h"
 #include "Hero_Bullet.h"
 #include "../data/ImageCenter.h"
+#include "../ball/Ball.h"
 namespace HeroSetting
 {
     static constexpr char gif_root_path[40] = {
@@ -41,6 +42,10 @@ void Hero::init()
         DC->window_height / 2,
         DC->window_width / 2 + gif->width,
         DC->window_height / 2 + gif->height});
+    for(int i=0;i<20;i++)
+    {
+        DC->balls.emplace_back(Ball::create_ball());
+    }
 }
 void Hero::draw()
 {
@@ -50,37 +55,65 @@ void Hero::draw()
         gif,
         shape->center_x() - gif->width / 2,
         shape->center_y() - gif->height / 2, 0);
-}
+} 
+// double top()
+// {   
+//     GIFCenter *GIFC = GIFCenter::get_instance();
+//     ALGIF_ANIMATION *gif = GIFC->get(gifPath[state]);
+//     return shape->center_y() - gif->height() / 2;
+// }
+// double bottom()
+// {
+//     return shape->center_y() + gif->height() / 2;
+// }
+// double left()
+// {
+//     return shape->center_x() - gif->width() / 2;
+// }
+// double right()
+// {
+//     return shape->center_x() + gif->width() / 2;
+// }
 void Hero::update()
 {
-    DataCenter *DC=DataCenter::get_instance();
-    if(DC->key_state[ALLEGRO_KEY_W])
+    DataCenter *DC = DataCenter::get_instance();
+    // std::cout <<"top"<<shape->top()<<std::endl;
+    // std::cout <<"bottom"<<shape->bottom()<<std::endl;
+    // std::cout <<"left"<<shape->left()<<std::endl;
+    // std::cout <<"right"<<shape->right()<<std::endl;
+    // std::cout <<"window_height"<<DC->window_height<<std::endl;
+    // std::cout <<"window_width"<<DC->window_width<<std::endl;
+    if (DC->key_state[ALLEGRO_KEY_W] && shape->center_x()<1200)
     {
         shape->update_center_y(shape->center_y() - speed);
         state = HeroState::BACK;
+        
     }
-    else if(DC->key_state[ALLEGRO_KEY_S])
+    else if (DC->key_state[ALLEGRO_KEY_S] &&shape->center_x() >0)
     {
         shape->update_center_y(shape->center_y() + speed);
         state = HeroState::FRONT;
+        
     }
-    else if(DC->key_state[ALLEGRO_KEY_A])
+    else if (DC->key_state[ALLEGRO_KEY_A] && shape->center_y() < 800)
     {
         shape->update_center_x(shape->center_x() - speed);
         state = HeroState::LEFT;
+        
     }
-    else if(DC->key_state[ALLEGRO_KEY_D])
+    else if (DC->key_state[ALLEGRO_KEY_D] && shape->center_y() >0)
     {
         shape->update_center_x(shape->center_x() + speed);
         state = HeroState::RIGHT;
+       
     }
-    if(counter > 0)
+    if (counter > 0)
     {
         counter--;
     }
-    if(counter == 0)
+    if (counter == 0)
     {
-        attack(nullptr);
+        attack(nullptr); // 3 seconds delay (assuming 60 FPS)
     }
 }
 

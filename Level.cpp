@@ -96,7 +96,9 @@ Level::update() {
 void
 Level::draw() {
 	if(level == -1) return;
-	for(auto &[i, j] : road_path) {
+	for(auto &point : road_path) {
+		auto i=point.x;
+		auto j=point.y;
 		int x1 = i * LevelSetting::grid_size[level];
 		int y1 = j * LevelSetting::grid_size[level];
 		int x2 = x1 + LevelSetting::grid_size[level];
