@@ -28,7 +28,7 @@ Level::init() {
 	level = -1;
 	grid_w = -1;
 	grid_h = -1;
-	monster_spawn_counter = 0;
+	monster_spawn_counter = -1;
 }
 
 /**

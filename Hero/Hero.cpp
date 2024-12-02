@@ -42,7 +42,7 @@ void Hero::init()
         DC->window_height / 2,
         DC->window_width / 2 + gif->width,
         DC->window_height / 2 + gif->height});
-    for(int i=0;i<20;i++)
+    for(int i=0;i<70;i++)
     {
         DC->balls.emplace_back(Ball::create_ball());
     }

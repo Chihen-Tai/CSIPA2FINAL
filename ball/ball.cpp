@@ -130,10 +130,7 @@ void Ball::update()
 
     if (play_sound)
     {
-        for (int i = 0; i < 10; i++)
-        {
-            SC->play(sound_path, ALLEGRO_PLAYMODE_ONCE);
-        }
+        SC->play(sound_path, ALLEGRO_PLAYMODE_ONCE);
         // std::cout<<"play sound"<<std::endl;
     }
 }
