@@ -43,10 +43,6 @@ void Hero::init()
         0,
         gif->width,
         gif->height});
-    for(int i=0;i<2;i++)
-    {
-        DC->balls.emplace_back(Ball::create_ball());
-    }
 }
 void Hero::draw()
 {

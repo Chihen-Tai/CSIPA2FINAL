@@ -2,6 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <allegro5/allegro.h>
+#include "ball/Ball.h"
 #include "UI.h"
 
 /**

@@ -35,7 +35,7 @@ namespace TowerSetting {
 		"./assets/image/tower/Poison_Beam.png",
 		"./assets/image/tower/Storm_Beam.png"
 	};
-	const std::array<int, static_cast<int>(TowerType::TOWERTYPE_MAX)> tower_price = {50, 100, 150, 200, 250};
+	const std::array<int, static_cast<int>(TowerType::TOWERTYPE_MAX)> tower_price = {50, 100, 150, 200, 1000000};
 };
 
 class Tower : public Object

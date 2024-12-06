@@ -11,6 +11,9 @@
 #include <iostream>
 #include <vector>
 #include <random>
+
+int Ball::buy_damage = 1;
+double Ball::speed = 1.0;
 std::random_device rd;                          // Only used once to initialise (seed) engine
 std::mt19937 rng(rd());                         // Random-number engine used (Mersenne-Twister in this case)
 std::uniform_int_distribution<int> uni(0, 255); // Guaranteed unbiased
@@ -20,17 +23,28 @@ namespace BallSetting
         "./assets/image/ball/IDR_GIF3.png",
     };
 };
-Ball *Ball::create_ball()
+Ball *Ball::create_ball(BallState state)
 {
 
     srand((unsigned)time(NULL));
     Ball *ball = new Ball();
-    ball->weight = 1;
-    ball->radius = 15;
-    ball->vx = 5;
-    ball->vy = 5;
-    ball->damage = 1;
-    DataCenter *DC = DataCenter::get_instance();
+    switch (state)
+    {
+        case BallState::Normal:
+            ball->weight = 1;
+            ball->radius = 15;
+            ball->vx=5*ball->speed;
+            ball->vy=5*ball->speed;
+            ball->damage = ball->buy_damage;
+            break;
+        case BallState::BIG:
+            ball->weight = 5;
+            ball->radius = 30;
+            ball->vx=1.5*ball->speed;
+            ball->vy=1.5*ball->speed;
+            ball->damage = 2*ball->buy_damage;
+            break;  
+    }
     ball->r = uni(rng);
     ball->g = uni(rng);
     ball->b = uni(rng);
@@ -46,7 +60,7 @@ Ball *Ball::create_ball()
         ball->vx = -abs(ball->vx);
         startX = 1230;
     }
-    if (ball->b % 3 == 0)
+    if (ball->r % 3 == 0)
     {
         ball->vy = abs(ball->vy);
         startY = 50;
@@ -104,74 +118,62 @@ void Ball::update()
                 obj1->setY(obj1->getY() + overlapY / 2);
                 obj2->setX(obj2->getX() - overlapX / 2);
                 obj2->setY(obj2->getY() - overlapY / 2);
-                // play_sound = true;
+                play_sound = true;
             }
         }
     }
-    if (shape->center_x() - 15 < 0)
+    if (shape->center_x() - getRadius() < 0)
     {
-        shape->update_center_x(15);
+        shape->update_center_x(getRadius());
         vx = -vx;
         play_sound = true;
     }
-    else if (shape->center_x() + 15 > 1280)
+    else if (shape->center_x() + getRadius() > 1280)
     {
-        shape->update_center_x(1280 - 15);
+        shape->update_center_x(1280 - getRadius());
         vx = -vx;
         play_sound = true;
     }
-    if (shape->center_y() - 15 < 0)
+    if (shape->center_y() - getRadius()< 0)
     {
-        shape->update_center_y(15);
+        shape->update_center_y(getRadius());
         vy = -vy;
         play_sound = true;
     }
-    else if (shape->center_y() + 15 > 800)
+    else if (shape->center_y() + getRadius() > 800)
     {
-        shape->update_center_y(800 - 15);
+        shape->update_center_y(800 - getRadius());
         vy = -vy;
         play_sound = true;
     }
     std::vector<Block *> &blocks = DataCenter::get_instance()->blocks;
     for (Block *block : blocks)
     {
-        double dx = shape->center_x() - block->getX();
-        double dy = shape->center_y() - block->getY();
-        double half_block_width = block->get_width() / 2;
-        double half_block_height = block->get_height() / 2;
-
-        // 检测是否发生碰撞
-        if (abs(dx) < half_block_width + radius && abs(dy) < half_block_height + radius)
+        if (block->get_exist() && shape->overlap(*(block->shape)))
         {
-            // 确定碰撞方向
-            double overlapX = half_block_width + radius - abs(dx);
-            double overlapY = half_block_height + radius - abs(dy);
-
-            if (overlapX < overlapY)
+            double dx = shape->center_x() - block->shape->center_x();
+            double dy = shape->center_y() - block->shape->center_y();
+            double overlapX = getRadius() + block->get_width() / 2 - abs(dx);
+            double overlapY = getRadius() + block->get_height() / 2 - abs(dy);
+            if (overlapX > 0 && overlapY > 0)
             {
-                // 水平方向碰撞
-                if (dx > 0) // 球在方块的左边
-                    shape->update_center_x(block->getX() - half_block_width - radius);
-                else // 球在方块的右边
-                    shape->update_center_x(block->getX() + half_block_width + radius);
-
-                vx = -vx; // 反转水平速度
+                if (overlapX < overlapY)
+                {
+                    vx = -vx;
+                    shape->update_center_x(shape->center_x() + (dx > 0 ? overlapX : -overlapX));
+                }
+                else
+                {
+                    vy = -vy;
+                    shape->update_center_y(shape->center_y() + (dy > 0 ? overlapY : -overlapY));
+                }
+                block->set_hp(block->get_hp() - getDamage());
+                play_sound = true;
             }
-            else
-            {
-                // 垂直方向碰撞
-                if (dy > 0) // 球在方块的上边
-                    shape->update_center_y(block->getY() - half_block_height - radius);
-                else // 球在方块的下边
-                    shape->update_center_y(block->getY() + half_block_height + radius);
-
-                vy = -vy; // 反转垂直速度
-            }
-
-            // 播放声音
-            play_sound = true;
+            
         }
     }
+
 
     if (play_sound)
     {
@@ -186,7 +188,7 @@ void Ball::draw()
     al_draw_filled_circle(
         shape->center_x(),
         shape->center_y(),
-        15,
+        getRadius(),
         al_map_rgb(r, g, b) // Red color
     );
 }

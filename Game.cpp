@@ -8,9 +8,8 @@
 #include "Player.h"
 #include "Level.h"
 
-
 #include "Hero/Hero.h"
-#include "ball/Ball.h"
+
 #include "block/block.h"
 
 #include <allegro5/allegro_primitives.h>
@@ -139,8 +138,9 @@ Game::game_init() {
 	DC->level->init();
 
 	DC->hero->init();
+
 	int map_data[17][20];
-	FILE* fp = fopen("./assets/map/map_1.txt","r");
+	FILE* fp = fopen("./assets/map/map_3.txt","r");
 	for(int i=0;i<17;i++)
 	{
 		for(int j=0;j<20;j++)
@@ -148,7 +148,7 @@ Game::game_init() {
 			fscanf(fp,"%d", &map_data[i][j]);
 			if(map_data[i][j]==1)
 			{
-				DC->blocks.emplace_back(Block::create_block(i,j,2));
+				DC->blocks.emplace_back(Block::create_block(i,j,4));
 			}
 		}
 	}

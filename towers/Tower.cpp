@@ -12,7 +12,7 @@
 #include "../data/ImageCenter.h"
 #include "../data/SoundCenter.h"
 #include <allegro5/bitmap_draw.h>
-
+#include "../ball/ball.h"
 // fixed settings
 namespace TowerSetting {
 	constexpr char attack_sound_path[] = "./assets/sound/Arrow.wav";
@@ -26,6 +26,7 @@ Tower::get_bitmap(TowerType type) {
 
 Tower*
 Tower::create_tower(TowerType type, const Point &p) {
+	DataCenter *DC = DataCenter::get_instance();
 	switch(type) {
 		case TowerType::ARCANE: {
 			return new TowerArcane(p);

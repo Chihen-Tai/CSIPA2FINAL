@@ -18,6 +18,7 @@ class Block : public Object
     const int get_height() const { return height; }
     const int getX() const { return x_init+i*(width+space); }
     const int getY() const { return y_init+j*(height+space); }
+    const bool get_exist() const { return exist; }
     private:
     int hp=2; 
     int i,j;

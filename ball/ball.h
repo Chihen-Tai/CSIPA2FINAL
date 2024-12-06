@@ -9,7 +9,8 @@
 #include <time.h>
 enum class BallState
 {
-    Normal
+    Normal,
+    BIG
 };
 class Vector
 {
@@ -52,13 +53,14 @@ public:
 private:
     double x, y;
 };
+
 class Ball : public Object
 {
     public:
     void init();    
     void update();
     void draw();
-    static Ball* create_ball();
+    static Ball* create_ball(BallState state);
     double getX() { return shape->center_x(); }
     double getY() { return shape->center_y(); }   
     const double &getSpeedX() const { return vx; }
@@ -68,16 +70,26 @@ class Ball : public Object
     const double &getRadius() const { return radius; }
     const double &getWeight() const { return weight; }
     const int &getDamage() const { return damage; }
+    const double &get_vx() const { return vx; }
+    const double &get_vy() const { return vy; }
+    void set_vx(double vx) { this->vx = vx; }
+    void set_vy(double vy) { this->vy = vy; }
+    void setDamage(int damage) { this->damage = damage; }
+    static int buy_damage;
+    static double speed;
     private:
     std::map<BallState,std::string>  pngpath;
+    
+    int damage;
     double vx;
     double vy;
-    int damage;
     int r;
     int g;
     int b;
     double weight;
     double radius;
 };
+
+
 
 #endif // BALL_H_INCLUDED
