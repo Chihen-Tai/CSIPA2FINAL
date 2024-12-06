@@ -26,7 +26,6 @@ Tower::get_bitmap(TowerType type) {
 
 Tower*
 Tower::create_tower(TowerType type, const Point &p) {
-	DataCenter *DC = DataCenter::get_instance();
 	switch(type) {
 		case TowerType::ARCANE: {
 			return new TowerArcane(p);

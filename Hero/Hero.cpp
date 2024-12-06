@@ -34,7 +34,6 @@ void Hero::init()
             HeroSetting::gid_postfix[static_cast<int>(type)]);
         gifPath[static_cast<HeroState>(type)] = std::string(buffer);
     }
-    DataCenter *DC = DataCenter::get_instance();
     GIFCenter *GIFC = GIFCenter::get_instance();
     // see Monster.cpp 148
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[HeroState::FRONT]);

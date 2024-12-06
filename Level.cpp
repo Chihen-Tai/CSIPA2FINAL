@@ -85,14 +85,7 @@ Level::update()
 	}
 }
 
-void
-Level::draw() 
-{
-}
 
-bool
-Level::is_onroad(const Rectangle &region) {
-}
 
 Rectangle
 Level::grid_to_region(const Point &grid) const {

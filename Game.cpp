@@ -248,7 +248,6 @@ Game::game_draw() {
 				al_map_rgb(100, 100, 100));
 		// user interface
 		if(state != STATE::START) {
-			DC->level->draw();
 			OC->draw();
 			DC->hero->draw();
 			ui->draw();

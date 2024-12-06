@@ -31,20 +31,20 @@ Ball *Ball::create_ball(BallState state)
     Ball *ball = new Ball();
     switch (state)
     {
-        case BallState::Normal:
-            ball->weight = 1;
-            ball->radius = 15;
-            ball->vx=5*ball->speed;
-            ball->vy=5*ball->speed;
-            ball->damage = ball->buy_damage;
-            break;
-        case BallState::BIG:
-            ball->weight = 5;
-            ball->radius = 30;
-            ball->vx=1.5*ball->speed;
-            ball->vy=1.5*ball->speed;
-            ball->damage = 2*ball->buy_damage;
-            break;  
+    case BallState::Normal:
+        ball->weight = 1;
+        ball->radius = 15;
+        ball->vx = 5 * ball->speed;
+        ball->vy = 5 * ball->speed;
+        ball->damage = ball->buy_damage;
+        break;
+    case BallState::BIG:
+        ball->weight = 5;
+        ball->radius = 30;
+        ball->vx = 1.5 * ball->speed;
+        ball->vy = 1.5 * ball->speed;
+        ball->damage = 2 * ball->buy_damage;
+        break;
     }
     ball->r = uni(rng);
     ball->g = uni(rng);
@@ -120,7 +120,7 @@ void Ball::update()
                 obj1->setY(obj1->getY() + overlapY / 2);
                 obj2->setX(obj2->getX() - overlapX / 2);
                 obj2->setY(obj2->getY() - overlapY / 2);
-                //play_sound = true;
+                // play_sound = true;
             }
         }
     }
@@ -136,7 +136,7 @@ void Ball::update()
         vx = -vx;
         play_sound = true;
     }
-    if (shape->center_y() - getRadius()< 0)
+    if (shape->center_y() - getRadius() < 0)
     {
         shape->update_center_y(getRadius());
         vy = -vy;
@@ -169,14 +169,12 @@ void Ball::update()
                     vy = -vy;
                     shape->update_center_y(shape->center_y() + (dy > 0 ? overlapY : -overlapY));
                 }
-                block->set_hp(block->get_hp() - getDamage());            
+                block->set_hp(block->get_hp() - getDamage());
                 DC->player->coin += damage;
                 play_sound = true;
             }
-            
         }
     }
-
 
     if (play_sound)
     {

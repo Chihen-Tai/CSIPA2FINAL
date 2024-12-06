@@ -155,26 +155,6 @@ void UI::update()
 		}
 		break;
 	}
-	case STATE::SELECT:
-	{
-		// click mouse left button: place
-		if (DC->mouse_state[1] && !DC->prev_mouse_state[1])
-		{
-
-			DC->player->coin -= 50;
-			on_item = -1;
-			debug_log("<UI> state: change to HALT\n");
-			state = STATE::HALT;
-		}
-		// click mouse right button: cancel
-		if (DC->mouse_state[2] && !DC->prev_mouse_state[2])
-		{
-			on_item = -1;
-			debug_log("<UI> state: change to HALT\n");
-			state = STATE::HALT;
-		}
-		break;
-	}
 	}
 }
 
@@ -198,7 +178,7 @@ void UI::draw()
 		ALLEGRO_ALIGN_LEFT, "coin: %5d", player_coin);
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-		0, love_img_padding *10,
+		0, love_img_padding * 10,
 		ALLEGRO_ALIGN_LEFT, "speed: %.4lf", Ball::speed);
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
