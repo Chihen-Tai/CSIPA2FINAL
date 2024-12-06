@@ -31,6 +31,7 @@ DataCenter::DataCenter() {
 	level = new Level();
 	/*-----------------*/
 	hero = new Hero();
+	
 }
 
 DataCenter::~DataCenter() {

@@ -93,12 +93,16 @@ void UI::update()
 			// add coin
 			if (on_item == 0)
 			{
+				if (DC->player->coin < 50)
+				{
+					break;
+				}
 				DC->player->coin -= 50;
 				DC->balls.emplace_back(Ball::create_ball(BallState::Normal));
 			}
 			if (on_item == 1)
 			{
-				if(DC->player->coin < 100)
+				if (DC->player->coin < 100)
 				{
 					break;
 				}
@@ -112,7 +116,7 @@ void UI::update()
 			}
 			if (on_item == 2)
 			{
-				if(DC->player->coin < 150)
+				if (DC->player->coin < 150)
 				{
 					break;
 				}
@@ -125,53 +129,29 @@ void UI::update()
 			}
 			if (on_item == 3)
 			{
-				if(DC->player->coin >= 200)
+				if (DC->player->coin < 200)
 				{
-					DC->player->coin -= 200;
-					DC->balls.emplace_back(Ball::create_ball(BallState::BIG));
+					break;
 				}
-				
+				DC->player->coin -= 200;
+				DC->balls.emplace_back(Ball::create_ball(BallState::BIG));
 			}
 			if (on_item == 4)
 			{
-				if (DC->player->coin >= 1000000)
+				if (DC->player->coin < 1000000)
 				{
-					DC->player->coin -= 1000000;
-					std::string url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-
-					// 將命令組合成字串
-#ifdef _WIN32
-					std::string command = "start " + url; // Windows 系統
-#endif
-
-					// 執行命令以打開瀏覽器
-					int result = std::system(command.c_str());
-
-					// 檢查命令是否成功執行
-					if (result == 0)
-					{
-						std::cout << "YouTube opened successfully!" << std::endl;
-					}
-					else
-					{
-						std::cerr << "Failed to open YouTube." << std::endl;
-					}
+					break;
 				}
-			}
-			else
-			{
-				std::cout << "Not enough money to buy tower." << std::endl;
-			}
+				// 替換為你的 MP4 檔案路徑
+				const char *filePath = "./assets/sound/WIN_VIDEO.mp4";
 
-			// no money
-			/*
-			if(price > DC->player->coin) {
-				debug_log("<UI> Not enough money to buy tower %d.\n", on_item);
-				break;
+				// 使用系統預設播放器開啟
+				std::string command = "start ";
+				command += filePath;
+
+				// 執行命令
+				std::system(command.c_str());
 			}
-			*/
-			// debug_log("<UI> state: change to SELECT\n");
-			// state = STATE::SELECT;
 		}
 		break;
 	}
@@ -202,7 +182,6 @@ void UI::draw()
 {
 	DataCenter *DC = DataCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
-	const Point &mouse = DC->mouse;
 	// draw HP
 	const int &game_field_length = DC->game_field_length;
 	const int &player_HP = DC->player->HP;
@@ -217,6 +196,14 @@ void UI::draw()
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
 		game_field_length + love_img_padding, love_img_padding,
 		ALLEGRO_ALIGN_LEFT, "coin: %5d", player_coin);
+	al_draw_textf(
+		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+		0, love_img_padding *10,
+		ALLEGRO_ALIGN_LEFT, "speed: %.4lf", Ball::speed);
+	al_draw_textf(
+		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+		0, love_img_padding * 3,
+		ALLEGRO_ALIGN_LEFT, "damage: %3d", Ball::buy_damage);
 	// draw tower shop items
 	for (auto &[bitmap, p, price] : tower_items)
 	{

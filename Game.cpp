@@ -23,7 +23,7 @@
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
-constexpr char background_img_path[] = "./assets/image/StartBackground.jpg";
+constexpr char background_img_path[] = "./assets/image/StartBackground.png";
 constexpr char background_sound_path[] = "./assets/sound/bossfight.mp3";
 
 /**
@@ -139,19 +139,7 @@ Game::game_init() {
 
 	DC->hero->init();
 
-	int map_data[17][20];
-	FILE* fp = fopen("./assets/map/map_3.txt","r");
-	for(int i=0;i<17;i++)
-	{
-		for(int j=0;j<20;j++)
-		{
-			fscanf(fp,"%d", &map_data[i][j]);
-			if(map_data[i][j]==1)
-			{
-				DC->blocks.emplace_back(Block::create_block(i,j,4));
-			}
-		}
-	}
+	
     
 	// game start
 	background = IC->get(background_img_path);
@@ -200,10 +188,6 @@ Game::game_update() {
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
 			}
-			if(DC->level->remain_monsters() == 0 && DC->monsters.size() == 0) {
-				debug_log("<Game> state: change to END\n");
-				state = STATE::END;
-			}
 			if(DC->player->HP == 0) {
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
@@ -226,8 +210,8 @@ Game::game_update() {
 		SC->update();
 		ui->update();
 		DC->hero->update();
+		DC->level->update();
 		if(state != STATE::START) {
-			DC->level->update();
 			OC->update();
 		}
 	}

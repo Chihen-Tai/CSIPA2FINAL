@@ -10,6 +10,8 @@
 #include <allegro5/allegro_primitives.h>
 #include "../Hero/Hero_Bullet.h"
 #include "../ball/ball.h"
+#include "../Level.h"
+#include "../Player.h"
 Block *Block::create_block(int i,int j,int hp)
 {
     
@@ -30,7 +32,11 @@ void Block::update()
 {
     if(hp<=0)
     {
-        exist=false;
+        if(exist==true)
+        {
+            DataCenter::get_instance()->level->total_blocks--;  
+            exist=false; 
+        }
     }
     DataCenter *DC = DataCenter::get_instance();
     std::vector<Hero_Bullet*> &heroBullets = DC->heroBullets;
@@ -41,6 +47,7 @@ void Block::update()
             hp-=heroBullets[i]->get_dmg();
             heroBullets.erase(heroBullets.begin()+i);
             --i;
+            DC->player->coin+=1;
         }
     }
     // for(size_t i=0;i<DC->balls.size();++i)

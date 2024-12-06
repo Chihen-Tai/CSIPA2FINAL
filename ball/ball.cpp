@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include "../Player.h"
 
 int Ball::buy_damage = 1;
 double Ball::speed = 1.0;
@@ -80,6 +81,7 @@ constexpr char sound_path[] = "./assets/sound/sound1.wav";
 void Ball::update()
 {
     SoundCenter *SC = SoundCenter::get_instance();
+    DataCenter *DC = DataCenter::get_instance();
     shape->update_center_x(shape->center_x() + vx);
     shape->update_center_y(shape->center_y() - vy);
     // SC->play(sound_path, ALLEGRO_PLAYMODE_ONCE);
@@ -118,7 +120,7 @@ void Ball::update()
                 obj1->setY(obj1->getY() + overlapY / 2);
                 obj2->setX(obj2->getX() - overlapX / 2);
                 obj2->setY(obj2->getY() - overlapY / 2);
-                play_sound = true;
+                //play_sound = true;
             }
         }
     }
@@ -167,7 +169,8 @@ void Ball::update()
                     vy = -vy;
                     shape->update_center_y(shape->center_y() + (dy > 0 ? overlapY : -overlapY));
                 }
-                block->set_hp(block->get_hp() - getDamage());
+                block->set_hp(block->get_hp() - getDamage());            
+                DC->player->coin += damage;
                 play_sound = true;
             }
             

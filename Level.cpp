@@ -3,13 +3,14 @@
 #include "Utils.h"
 #include "monsters/Monster.h"
 #include "ball/Ball.h"
+#include "block/block.h"
 #include "data/DataCenter.h"
 #include <allegro5/allegro_primitives.h>
 #include "shapes/Point.h"
 #include "shapes/Rectangle.h"
 #include "shapes/Circle.h"
 #include <array>
-
+#include <iostream>
 using namespace std;
 
 // fixed settings
@@ -45,30 +46,28 @@ void
 Level::load_level(int lvl) {
 	DataCenter *DC = DataCenter::get_instance();
 
-	char buffer[50];
-	sprintf(buffer, LevelSetting::level_path_format, lvl);
-	FILE *f = fopen(buffer, "r");
-	GAME_ASSERT(f != nullptr, "cannot find level.");
-	level = lvl;
-	grid_w = DC->game_field_length / LevelSetting::grid_size[lvl];
-	grid_h = DC->game_field_length / LevelSetting::grid_size[lvl];
-	num_of_monsters.clear();
-	road_path.clear();
+	int map_data[17][20];
+	now_level=lvl;
+	total_blocks=0;
 
-	int num;
-	// read total number of monsters & number of each monsters
-	fscanf(f, "%d", &num);
-	for(size_t i = 0; i < static_cast<size_t>(MonsterType::MONSTERTYPE_MAX); ++i) {
-		fscanf(f, "%d", &num);
-		num_of_monsters.emplace_back(num);
+	char file_path[50];
+	sprintf(file_path, "./assets/map/map_%d.txt", now_level%4);
+	FILE *f = fopen(file_path, "r");
+	
+	for(int i=0;i<17;i++)
+	{
+		for(int j=0;j<20;j++)
+		{
+			fscanf(f,"%d", &map_data[i][j]);
+			if(map_data[i][j]==1)
+			{
+				DC->blocks.emplace_back(Block::create_block(i,j,lvl));
+				total_blocks++;
+			}
+		}
 	}
-
+	//std::cout<<total_blocks<<std::endl;
 	// read road path
-	while(fscanf(f, "%d", &num) != EOF) {
-		int w = num % grid_w;
-		int h = num / grid_h;
-		road_path.emplace_back(w, h);
-	}
 	debug_log("<Level> load level %d.\n", lvl);
 }
 
@@ -76,44 +75,23 @@ Level::load_level(int lvl) {
  * @brief Updates monster_spawn_counter and create monster if needed.
 */
 void
-Level::update() {
-	if(monster_spawn_counter) {
-		monster_spawn_counter--;
-		return;
+Level::update() 
+{
+	//cout<<"total_blocks: "<<total_blocks<<endl;
+	if (total_blocks == 0) {
+		//cout<<"trigger"<<endl;
+		now_level++;
+		load_level(now_level);
 	}
-	DataCenter *DC = DataCenter::get_instance();
-
-	for(size_t i = 0; i < num_of_monsters.size(); ++i) {
-		if(num_of_monsters[i] == 0) continue;
-		DC->monsters.emplace_back(Monster::create_monster(static_cast<MonsterType>(i), DC->level->get_road_path()));
-		num_of_monsters[i]--;
-		break;
-	}
-	monster_spawn_counter = LevelSetting::monster_spawn_rate;
-	
 }
 
 void
-Level::draw() {
-	if(level == -1) return;
-	for(auto &point : road_path) {
-		auto i=point.x;
-		auto j=point.y;
-		int x1 = i * LevelSetting::grid_size[level];
-		int y1 = j * LevelSetting::grid_size[level];
-		int x2 = x1 + LevelSetting::grid_size[level];
-		int y2 = y1 + LevelSetting::grid_size[level];
-		al_draw_filled_rectangle(x1, y1, x2, y2, al_map_rgb(255, 244, 173));
-	}
+Level::draw() 
+{
 }
 
 bool
 Level::is_onroad(const Rectangle &region) {
-	for(const Point &grid : road_path) {
-		if(grid_to_region(grid).overlap(region))
-			return true;
-	}
-	return false;
 }
 
 Rectangle
