@@ -6,6 +6,8 @@
 #include "../Player.h"
 #include "../Hero/Hero.h"
 #include "../ball/ball.h"	
+#include "../block/block.h"
+#include <iostream>
 void OperationCenter::update() {
 	// Update monsters.
 	_update_monster();
@@ -23,6 +25,8 @@ void OperationCenter::update() {
 	_update_heroBullet();
 
 	_update_ball();
+
+	_update_block();
 }
 void OperationCenter::_update_ball() {
 	std::vector<Ball*> &balls = DataCenter::get_instance()->balls;
@@ -105,14 +109,13 @@ void OperationCenter::_update_monster_hero() {
 		}
 	}
 }
-
 void OperationCenter::draw() {
 	_draw_ball();
 	_draw_monster();
 	_draw_tower();
 	_draw_towerBullet();
 	_draw_heroBullet();
-	
+	_draw_block();
 }
 void OperationCenter::_draw_ball() {
 	std::vector<Ball*> &balls = DataCenter::get_instance()->balls;
@@ -147,4 +150,18 @@ void OperationCenter::_update_heroBullet() {
 	std::vector<Hero_Bullet*> &heroBullets = DataCenter::get_instance()->heroBullets;
 	for(Hero_Bullet *heroBullet : heroBullets)
 		heroBullet->update();
+}
+
+void OperationCenter::_update_block() {
+	std::vector<Block*> &blocks = DataCenter::get_instance()->blocks;
+	for(Block *block : blocks)
+		block->update();
+	//std::cout<<"update block"<<std::endl;
+}
+
+void OperationCenter::_draw_block() {
+	std::vector<Block*> &blocks = DataCenter::get_instance()->blocks;
+	for(Block *block : blocks)
+		block->draw();
+	//std::cout<<"draw block"<<std::endl;
 }

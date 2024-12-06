@@ -19,7 +19,7 @@ private:
 	ALLEGRO_BITMAP *bitmap;
 	double vx, vy;
 	double fly_dist;
-	int dmg;
+	int dmg=1;
 };
 
 

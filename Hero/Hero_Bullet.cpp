@@ -10,7 +10,7 @@ Hero_Bullet::Hero_Bullet(const Point &p, const Point &target, const std::string 
 {
 	ImageCenter *IC = ImageCenter::get_instance();
 	this->fly_dist = 100;
-	this->dmg = 10;
+	this->dmg = 1;
 	bitmap = IC->get(path);
 	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.8;
 	shape.reset(new Circle{p.x, p.y, r});

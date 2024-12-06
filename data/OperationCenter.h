@@ -33,12 +33,14 @@ private:
 	void _update_monster_hero();
 	void _update_heroBullet();
 	void _update_ball();
+	void _update_block();
 private:
 	void _draw_monster();
 	void _draw_tower();
 	void _draw_towerBullet();
 	void _draw_heroBullet();	
 	void _draw_ball();
+	void _draw_block();
 };
 
 #endif

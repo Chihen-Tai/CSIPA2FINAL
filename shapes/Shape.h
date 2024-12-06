@@ -25,7 +25,6 @@ public:
 	virtual const ShapeType getType() const = 0;
 	virtual ~Shape() {}
 
-	
 private:
 	double x;
 	double y;

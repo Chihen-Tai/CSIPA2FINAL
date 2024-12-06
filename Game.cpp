@@ -11,6 +11,7 @@
 
 #include "Hero/Hero.h"
 #include "ball/Ball.h"
+#include "block/block.h"
 
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
@@ -24,7 +25,7 @@
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "./assets/image/StartBackground.jpg";
-constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
+constexpr char background_sound_path[] = "./assets/sound/bossfight.mp3";
 
 /**
  * @brief Game entry.
@@ -138,6 +139,20 @@ Game::game_init() {
 	DC->level->init();
 
 	DC->hero->init();
+	int map_data[17][20];
+	FILE* fp = fopen("./assets/map/map_1.txt","r");
+	for(int i=0;i<17;i++)
+	{
+		for(int j=0;j<20;j++)
+		{
+			fscanf(fp,"%d", &map_data[i][j]);
+			if(map_data[i][j]==1)
+			{
+				DC->blocks.emplace_back(Block::create_block(i,j,2));
+			}
+		}
+	}
+    
 	// game start
 	background = IC->get(background_img_path);
 	debug_log("Game state: change to START\n");
@@ -250,9 +265,9 @@ Game::game_draw() {
 		// user interface
 		if(state != STATE::START) {
 			DC->level->draw();
+			OC->draw();
 			DC->hero->draw();
 			ui->draw();
-			OC->draw();
 		}
 	}
 	switch(state) {

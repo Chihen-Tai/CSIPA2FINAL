@@ -10,6 +10,7 @@
 #include "Hero_Bullet.h"
 #include "../data/ImageCenter.h"
 #include "../ball/Ball.h"
+#include "../block/block.h"
 namespace HeroSetting
 {
     static constexpr char gif_root_path[40] = {
@@ -38,11 +39,11 @@ void Hero::init()
     // see Monster.cpp 148
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[HeroState::FRONT]);
     shape.reset(new Rectangle{
-        DC->window_width / 2,
-        DC->window_height / 2,
-        DC->window_width / 2 + gif->width,
-        DC->window_height / 2 + gif->height});
-    for(int i=0;i<70;i++)
+        0,
+        0,
+        gif->width,
+        gif->height});
+    for(int i=0;i<2;i++)
     {
         DC->balls.emplace_back(Ball::create_ball());
     }
@@ -83,25 +84,25 @@ void Hero::update()
     // std::cout <<"right"<<shape->right()<<std::endl;
     // std::cout <<"window_height"<<DC->window_height<<std::endl;
     // std::cout <<"window_width"<<DC->window_width<<std::endl;
-    if (DC->key_state[ALLEGRO_KEY_W] && shape->center_x()<1200)
+    if (DC->key_state[ALLEGRO_KEY_W] )
     {
         shape->update_center_y(shape->center_y() - speed);
         state = HeroState::BACK;
         
     }
-    else if (DC->key_state[ALLEGRO_KEY_S] &&shape->center_x() >0)
+    else if (DC->key_state[ALLEGRO_KEY_S] )
     {
         shape->update_center_y(shape->center_y() + speed);
         state = HeroState::FRONT;
         
     }
-    else if (DC->key_state[ALLEGRO_KEY_A] && shape->center_y() < 800)
+    else if (DC->key_state[ALLEGRO_KEY_A] )
     {
         shape->update_center_x(shape->center_x() - speed);
         state = HeroState::LEFT;
         
     }
-    else if (DC->key_state[ALLEGRO_KEY_D] && shape->center_y() >0)
+    else if (DC->key_state[ALLEGRO_KEY_D] )
     {
         shape->update_center_x(shape->center_x() + speed);
         state = HeroState::RIGHT;
@@ -122,8 +123,9 @@ Hero_Bullet *Hero::create_bullet(Object *target)
     DataCenter *DC = DataCenter::get_instance();
     const Point &p = Point(shape->center_x(), shape->center_y());
     const Point &t = DC->mouse;
-    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path, 150, 1, 100000);
+    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path, 150, 1, 1000);
 }
+
 bool Hero::attack(Object *target)
 {
     //std::cout<<"attack"<<std::endl;
@@ -131,6 +133,6 @@ bool Hero::attack(Object *target)
     SC->play(HeroSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
     DataCenter *DC = DataCenter::get_instance();
     DC->heroBullets.emplace_back(create_bullet(target));
-    counter = attack_freq;
+    counter = 18; // 0.3 seconds delay (assuming 60 FPS)
     return true;
 }

@@ -7,6 +7,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include "../data/SoundCenter.h"
+#include "../block/block.h"
 #include <iostream>
 #include <vector>
 #include <random>
@@ -24,38 +25,42 @@ Ball *Ball::create_ball()
 
     srand((unsigned)time(NULL));
     Ball *ball = new Ball();
+    ball->weight = 1;
+    ball->radius = 15;
+    ball->vx = 5;
+    ball->vy = 5;
+    ball->damage = 1;
     DataCenter *DC = DataCenter::get_instance();
-    ball->shape.reset(new Circle{DC->window_width / 2, DC->window_height / 2, 50});
     ball->r = uni(rng);
     ball->g = uni(rng);
     ball->b = uni(rng);
+    int startX;
+    int startY;
     if (ball->r % 2 == 0)
     {
         ball->vx = abs(ball->vx);
+        startX = 50;
     }
     else
     {
         ball->vx = -abs(ball->vx);
+        startX = 1230;
     }
     if (ball->b % 3 == 0)
     {
         ball->vy = abs(ball->vy);
+        startY = 50;
     }
     else
     {
         ball->vy = -abs(ball->vy);
+        startY = 750;
     }
+    ball->shape.reset(new Circle{
+        (double)startX,
+        (double)startY,
+        (double)ball->radius});
     return ball;
-}
-void Ball::init()
-{
-    std::cout << "Ball init" << std::endl;
-    DataCenter *DC = DataCenter::get_instance();
-    std::cout << "Ball init2" << std::endl;
-    // ImageCenter *IC = ImageCenter::get_instance();
-    shape.reset(new Circle{DC->window_width / 2, DC->window_height / 2, 50});
-    std::cout << "Ball init3" << std::endl;
-    // std::cout<<random<<std::endl;
 }
 constexpr char sound_path[] = "./assets/sound/sound1.wav";
 void Ball::update()
@@ -75,11 +80,11 @@ void Ball::update()
             Ball *obj2 = objects[j];
             double dx = obj1->getX() - obj2->getX();
             double dy = obj1->getY() - obj2->getY();
-            double dr = 30;
+            double dr = obj1->getRadius() + obj2->getRadius();
             if (dx * dx + dy * dy < dr * dr)
             {
-                double w1 = 1.0;
-                double w2 = 1.0;
+                double w1 = obj1->getWeight();
+                double w2 = obj2->getWeight();
                 Vector v1(obj1->getSpeedX(), obj1->getSpeedY());
                 Vector v2(obj2->getSpeedX(), obj2->getSpeedY());
                 Vector dv = v1 - v2;
@@ -127,6 +132,46 @@ void Ball::update()
         vy = -vy;
         play_sound = true;
     }
+    std::vector<Block *> &blocks = DataCenter::get_instance()->blocks;
+    for (Block *block : blocks)
+    {
+        double dx = shape->center_x() - block->getX();
+        double dy = shape->center_y() - block->getY();
+        double half_block_width = block->get_width() / 2;
+        double half_block_height = block->get_height() / 2;
+
+        // 检测是否发生碰撞
+        if (abs(dx) < half_block_width + radius && abs(dy) < half_block_height + radius)
+        {
+            // 确定碰撞方向
+            double overlapX = half_block_width + radius - abs(dx);
+            double overlapY = half_block_height + radius - abs(dy);
+
+            if (overlapX < overlapY)
+            {
+                // 水平方向碰撞
+                if (dx > 0) // 球在方块的左边
+                    shape->update_center_x(block->getX() - half_block_width - radius);
+                else // 球在方块的右边
+                    shape->update_center_x(block->getX() + half_block_width + radius);
+
+                vx = -vx; // 反转水平速度
+            }
+            else
+            {
+                // 垂直方向碰撞
+                if (dy > 0) // 球在方块的上边
+                    shape->update_center_y(block->getY() - half_block_height - radius);
+                else // 球在方块的下边
+                    shape->update_center_y(block->getY() + half_block_height + radius);
+
+                vy = -vy; // 反转垂直速度
+            }
+
+            // 播放声音
+            play_sound = true;
+        }
+    }
 
     if (play_sound)
     {
@@ -137,20 +182,11 @@ void Ball::update()
 
 void Ball::draw()
 {
-    // ImageCenter *IC = ImageCenter::get_instance();
-    // ALLEGRO_BITMAP *bitmap = IC->get(BallSetting::png_root_path);
 
-    // Draw the ball with color
     al_draw_filled_circle(
         shape->center_x(),
         shape->center_y(),
         15,
         al_map_rgb(r, g, b) // Red color
     );
-
-    // Draw the bitmap on top of the colored ball
-    // al_draw_bitmap(
-    //     bitmap,
-    //     shape->center_x() - al_get_bitmap_width(bitmap) / 2,
-    //     shape->center_y() - al_get_bitmap_height(bitmap) / 2, 0);
 }

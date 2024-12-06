@@ -65,14 +65,19 @@ class Ball : public Object
     const double &getSpeedY() const { return vy; } 
     void setX(double x) { shape->update_center_x(x); }
     void setY(double y) { shape->update_center_y(y); }
+    const double &getRadius() const { return radius; }
+    const double &getWeight() const { return weight; }
+    const int &getDamage() const { return damage; }
     private:
-    double speed =50.0;
     std::map<BallState,std::string>  pngpath;
-    double vx=5;
-    double vy=-5;
+    double vx;
+    double vy;
+    int damage;
     int r;
     int g;
     int b;
+    double weight;
+    double radius;
 };
 
 #endif // BALL_H_INCLUDED

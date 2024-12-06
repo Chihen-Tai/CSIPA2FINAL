@@ -17,6 +17,7 @@ class Bullet;
 class Hero;
 class Hero_Bullet;
 class Ball;
+class Block;
 /**
  * @brief Stores generic global data and relatively small data structures.
  * @details The globally used data such as FPS (frames per second), windows size, game region, and states of input devices (mouse and keyboard).
@@ -86,6 +87,13 @@ public:
 	 * @see Monster
 	 */
 	Hero *hero;
+	/**
+	 * @brief Raw list of Ball objects.
+	 * @see Ball
+	 */
+	Block *block;
+
+	std::vector<Block*> blocks;
 
 	std::vector<Ball*> balls;
 	/**
