@@ -49,7 +49,6 @@ Level::load_level(int lvl) {
 	int map_data[17][20];
 	now_level=lvl;
 	total_blocks=0;
-
 	char file_path[50];
 	sprintf(file_path, "./assets/map/map_%d.txt", now_level%4);
 	FILE *f = fopen(file_path, "r");

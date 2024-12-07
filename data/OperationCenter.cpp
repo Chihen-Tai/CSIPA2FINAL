@@ -110,6 +110,7 @@ void OperationCenter::_update_monster_hero() {
 	}
 }
 void OperationCenter::draw() {
+	
 	_draw_ball();
 	_draw_monster();
 	_draw_tower();

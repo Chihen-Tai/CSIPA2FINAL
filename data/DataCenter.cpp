@@ -17,6 +17,7 @@ namespace DataSetting {
 	constexpr int game_field_length = 800;
 }
 
+
 DataCenter::DataCenter() {
 	this->FPS = DataSetting::FPS;
 	this->window_width = DataSetting::window_width;

@@ -19,13 +19,15 @@ public:
 	void game_init();
 	bool game_update();
 	void game_draw();
+	void end_game();
 private:
 	/**
 	 * @brief States of the game process in game_update.
 	 * @see Game::game_update()
 	 */
 	enum class STATE {
-		START, // -> LEVEL
+		START_MENU, // -> LEVEL
+		START, // -> START_MENU, LEVEL
 		LEVEL, // -> PAUSE, END
 		PAUSE, // -> LEVEL
 		END
@@ -34,11 +36,13 @@ private:
 	ALLEGRO_EVENT event;
 	ALLEGRO_BITMAP *game_icon;
 	ALLEGRO_BITMAP *background;
+	ALLEGRO_BITMAP *start;
 private:
 	ALLEGRO_DISPLAY *display;
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_EVENT_QUEUE *event_queue;
 	UI *ui;
+	bool inMenu = true;
 };
 
 #endif

@@ -32,7 +32,7 @@ private:
     double speed = 5.0;
     std::map<HeroState,std::string> gifPath;
     int attack_freq = 10 ;
-    int counter = 180;
+    int counter = 18;
 };   
 
 #endif // HERO_H_INCLUDED

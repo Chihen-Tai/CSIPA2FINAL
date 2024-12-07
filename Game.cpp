@@ -21,6 +21,7 @@
 #include <cstring>
 
 // fixed settings
+constexpr char main_menu_img_path[] = "./assets/image/menu_game.png";
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
@@ -31,39 +32,56 @@ constexpr char background_sound_path[] = "./assets/sound/bossfight.mp3";
  * @details The function processes all allegro events and update the event state to a generic data storage (i.e. DataCenter).
  * For timer event, the game_update and game_draw function will be called if and only if the current is timer.
  */
-void
-Game::execute() {
+void Game::execute()
+{
 	DataCenter *DC = DataCenter::get_instance();
 	// main game loop
 	bool run = true;
-	while(run) {
+	while (run)
+	{
 		// process all events here
 		al_wait_for_event(event_queue, &event);
-		switch(event.type) {
-			case ALLEGRO_EVENT_TIMER: {
-				run &= game_update();
-				game_draw();
-				break;
-			} case ALLEGRO_EVENT_DISPLAY_CLOSE: { // stop game
-				run = false;
-				break;
-			} case ALLEGRO_EVENT_KEY_DOWN: {
-				DC->key_state[event.keyboard.keycode] = true;
-				break;
-			} case ALLEGRO_EVENT_KEY_UP: {
-				DC->key_state[event.keyboard.keycode] = false;
-				break;
-			} case ALLEGRO_EVENT_MOUSE_AXES: {
-				DC->mouse.x = event.mouse.x;
-				DC->mouse.y = event.mouse.y;
-				break;
-			} case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN: {
-				DC->mouse_state[event.mouse.button] = true;
-				break;
-			} case ALLEGRO_EVENT_MOUSE_BUTTON_UP: {
-				DC->mouse_state[event.mouse.button] = false;
-				break;
-			} default: break;
+		switch (event.type)
+		{
+		case ALLEGRO_EVENT_TIMER:
+		{
+			run &= game_update();
+			game_draw();
+			break;
+		}
+		case ALLEGRO_EVENT_DISPLAY_CLOSE:
+		{ // stop game
+			run = false;
+			break;
+		}
+		case ALLEGRO_EVENT_KEY_DOWN:
+		{
+			DC->key_state[event.keyboard.keycode] = true;
+			break;
+		}
+		case ALLEGRO_EVENT_KEY_UP:
+		{
+			DC->key_state[event.keyboard.keycode] = false;
+			break;
+		}
+		case ALLEGRO_EVENT_MOUSE_AXES:
+		{
+			DC->mouse.x = event.mouse.x;
+			DC->mouse.y = event.mouse.y;
+			break;
+		}
+		case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+		{
+			DC->mouse_state[event.mouse.button] = true;
+			break;
+		}
+		case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+		{
+			DC->mouse_state[event.mouse.button] = false;
+			break;
+		}
+		default:
+			break;
 		}
 	}
 }
@@ -72,7 +90,8 @@ Game::execute() {
  * @brief Initialize all allegro addons and the game body.
  * @details Only one timer is created since a game and all its data should be processed synchronously.
  */
-Game::Game() {
+Game::Game()
+{
 	DataCenter *DC = DataCenter::get_instance();
 	GAME_ASSERT(al_init(), "failed to initialize allegro.");
 
@@ -110,9 +129,8 @@ Game::Game() {
 /**
  * @brief Initialize all auxiliary resources.
  */
-void
-Game::game_init() {
-	DataCenter *DC = DataCenter::get_instance();
+void Game::game_init()
+{
 	SoundCenter *SC = SoundCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
@@ -121,10 +139,10 @@ Game::game_init() {
 	al_set_display_icon(display, game_icon);
 
 	// register events to event_queue
-    al_register_event_source(event_queue, al_get_display_event_source(display));
-    al_register_event_source(event_queue, al_get_keyboard_event_source());
-    al_register_event_source(event_queue, al_get_mouse_event_source());
-    al_register_event_source(event_queue, al_get_timer_event_source(timer));
+	al_register_event_source(event_queue, al_get_display_event_source(display));
+	al_register_event_source(event_queue, al_get_keyboard_event_source());
+	al_register_event_source(event_queue, al_get_mouse_event_source());
+	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
 	// init sound setting
 	SC->init();
@@ -132,19 +150,11 @@ Game::game_init() {
 	// init font setting
 	FC->init();
 
-	ui = new UI();
-	ui->init();
-
-	DC->level->init();
-
-	DC->hero->init();
-
-	
-    
 	// game start
 	background = IC->get(background_img_path);
+	start = IC->get(main_menu_img_path);
 	debug_log("Game state: change to START\n");
-	state = STATE::START;
+	state = STATE::START_MENU;
 	al_start_timer(timer);
 }
 
@@ -154,64 +164,130 @@ Game::game_init() {
  * @return Whether the game should keep running (true) or reaches the termination criteria (false).
  * @see Game::STATE
  */
-bool
-Game::game_update() {
+bool Game::game_update()
+{
 	DataCenter *DC = DataCenter::get_instance();
 	OperationCenter *OC = OperationCenter::get_instance();
 	SoundCenter *SC = SoundCenter::get_instance();
 	static ALLEGRO_SAMPLE_INSTANCE *background = nullptr;
+	static bool BGM_played = false;
+	switch (state)
+	{
+	case STATE::START_MENU:
+	{
+		static bool is_played = false;
+		static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
+		if (!is_played)
+		{
+			instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
+			DC->level->init();
+			DC->level->load_level(1);
+			ui = new UI();
+			ui->init(this);
+			DC->hero->init();
+			is_played = true;
+		}
 
-	switch(state) {
-		case STATE::START: {
-			static bool is_played = false;
-			static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
-			if(!is_played) {
-				instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
-				DC->level->load_level(1);
-				is_played = true;
+		if (!SC->is_playing(instance))
+		{
+			debug_log("<Game> state: change to LEVEL\n");
+			state = STATE::LEVEL;
+		}
+		break;
+	}
+	case STATE::START:
+	{
+		static bool is_played = false;
+		static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
+		if (!is_played)
+		{
+			instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
+			DC->level->load_level(1);
+			is_played = true;
+		}
+
+		if (!SC->is_playing(instance))
+		{
+			debug_log("<Game> state: change to LEVEL\n");
+			state = STATE::LEVEL;
+		}
+		break;
+	}
+	case STATE::LEVEL:
+	{
+		if (inMenu) {
+			if (DC->key_state[ALLEGRO_KEY_ENTER] && !DC->prev_key_state[ALLEGRO_KEY_ENTER])
+			{
+				inMenu = false;
 			}
 
-			if(!SC->is_playing(instance)) {
-				debug_log("<Game> state: change to LEVEL\n");
-				state = STATE::LEVEL;
-			}
-			break;
-		} case STATE::LEVEL: {
-			static bool BGM_played = false;
-			if(!BGM_played) {
-				background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP);
-				BGM_played = true;
-			}
-
-			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
-				SC->toggle_playing(background);
-				debug_log("<Game> state: change to PAUSE\n");
-				state = STATE::PAUSE;
-			}
-			if(DC->player->HP == 0) {
+			if (DC->key_state[ALLEGRO_KEY_ESCAPE] && !DC->prev_key_state[ALLEGRO_KEY_ESCAPE])
+			{
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
 			}
 			break;
-		} case STATE::PAUSE: {
-			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
-				SC->toggle_playing(background);
-				debug_log("<Game> state: change to LEVEL\n");
-				state = STATE::LEVEL;
-			}
-			break;
-		} case STATE::END: {
+		}
+
+		
+
+		if (!BGM_played)
+		{
+			background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP);
+			BGM_played = true;
+		}
+
+		if (DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P])
+		{
+			SC->toggle_playing(background);
+			debug_log("<Game> state: change to PAUSE\n");
+			state = STATE::PAUSE;
+		}
+		break;
+	}
+	case STATE::PAUSE:
+	{
+		if (DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P])
+		{
+			SC->toggle_playing(background);
+			debug_log("<Game> state: change to LEVEL\n");
+			state = STATE::LEVEL;
+		}
+		break;
+	}
+	case STATE::END:
+	{
+		if(DC->key_state[ALLEGRO_KEY_ENTER] && !DC->prev_key_state[ALLEGRO_KEY_ENTER])
+		{
+			// delete ui;
+			// ui = new UI();
+			// ui->init(this);
+			// DC->level->init();
+			// DC->player->coin = 100000000;
+			// DC->hero->init();
+			// for(auto &block:DC->blocks)
+			// {
+			// 	delete block;
+			// }
+			// DC->blocks.clear();
+			// SC->toggle_playing(background);
+			// inMenu = true;
+			// debug_log("<Game> state: change to START\n");
+			//state = STATE::START;
 			return false;
 		}
 	}
+	}
 	// If the game is not paused, we should progress update.
-	if(state != STATE::PAUSE) {
+	if (state == STATE::LEVEL && !inMenu)
+	{
 		DC->player->update();
 		SC->update();
 		ui->update();
 		DC->hero->update();
 		DC->level->update();
-		if(state != STATE::START) {
+		if (state != STATE::START && !inMenu)
+		{
 			OC->update();
 		}
 	}
@@ -225,54 +301,91 @@ Game::game_update() {
 /**
  * @brief Draw the whole game and objects.
  */
-void
-Game::game_draw() {
+void Game::game_draw()
+{
 	DataCenter *DC = DataCenter::get_instance();
 	OperationCenter *OC = OperationCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
 
 	// Flush the screen first.
 	al_clear_to_color(al_map_rgb(100, 100, 100));
-	if(state != STATE::END) {
+	if (state == STATE::LEVEL && inMenu)
+	{
+		al_draw_bitmap(start, 0, 0, 0);
+		al_draw_text(
+			FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
+			DC->window_width / 2., DC->window_height / 2.,
+			ALLEGRO_ALIGN_CENTRE, "Press enter to start");
+		al_draw_text(
+			FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+			DC->window_width / 2., DC->window_height / 2. + 50,
+			ALLEGRO_ALIGN_CENTRE, "Press P to pause in game");
+		al_draw_text(
+			FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+			DC->window_width / 2., DC->window_height / 2. + 100,
+			ALLEGRO_ALIGN_CENTRE, "Press esc to exit");
+	}
+	if (state == STATE::LEVEL)
+	{
 		// background
-		al_draw_bitmap(background, 0, 0, 0);
-		if(DC->game_field_length < DC->window_width)
-			al_draw_filled_rectangle(
-				DC->game_field_length, 0,
-				DC->window_width, DC->window_height,
-				al_map_rgb(100, 100, 100));
-		if(DC->game_field_length < DC->window_height)
-			al_draw_filled_rectangle(
-				0, DC->game_field_length,
-				DC->window_width, DC->window_height,
-				al_map_rgb(100, 100, 100));
+		if (!inMenu)
+			al_draw_bitmap(background, 0, 0, 0);
 		// user interface
-		if(state != STATE::START) {
+		if (state != STATE::START && !inMenu)
+		{
 			OC->draw();
 			DC->hero->draw();
 			ui->draw();
 		}
 	}
-	switch(state) {
-		case STATE::START: {
-		} case STATE::LEVEL: {
-			break;
-		} case STATE::PAUSE: {
-			// game layout cover
-			al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(50, 50, 50, 64));
-			al_draw_text(
-				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
-				DC->window_width/2., DC->window_height/2.,
-				ALLEGRO_ALIGN_CENTRE, "GAME PAUSED");
-			break;
-		} case STATE::END: {
-		}
+	switch (state)
+	{
+	case STATE::START:
+	{
+		break;
+	}
+	case STATE::START_MENU:
+	{
+		break;
+	}
+	case STATE::LEVEL:
+	{
+		break;
+	}
+	case STATE::PAUSE:
+	{
+		// game layout cover
+		al_draw_filled_rectangle(0, 0, DC->window_width, DC->window_height, al_map_rgba(50, 50, 50, 64));
+		al_draw_text(
+			FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+			DC->window_width / 2., DC->window_height / 2.,
+			ALLEGRO_ALIGN_CENTRE, "GAME PAUSED");
+		break;
+	}
+	case STATE::END:
+	{
+		if (!inMenu)
+			al_draw_bitmap(background, 0, 0, 0);
+		al_draw_text(
+			FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
+			DC->window_width / 2., DC->window_height / 2.,
+			ALLEGRO_ALIGN_CENTRE, "YOU WIN");
+		al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+					 DC->window_width / 2., DC->window_height / 2. + 50,
+					 ALLEGRO_ALIGN_CENTRE, "Press enter to exit");
+	}
 	}
 	al_flip_display();
 }
 
-Game::~Game() {
+Game::~Game()
+{
 	al_destroy_display(display);
 	al_destroy_timer(timer);
 	al_destroy_event_queue(event_queue);
+}
+
+void Game::end_game()
+{
+	state = STATE::END;
 }

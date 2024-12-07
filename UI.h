@@ -5,12 +5,12 @@
 #include <vector>
 #include <tuple>
 #include "./shapes/Point.h"
-
+class Game;
 class UI
 {
 public:
 	UI() {}
-	void init();
+	void init(Game* game);
 	void update();
 	void draw();
 private:
@@ -25,6 +25,7 @@ private:
 	// tower menu bitmap, (top-left x, top-left y), price
 	std::vector<std::tuple<ALLEGRO_BITMAP*, Point, int>> tower_items;
 	int on_item;
+	Game *game;
 };
 
 #endif

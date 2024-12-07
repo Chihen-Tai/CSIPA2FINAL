@@ -15,16 +15,18 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include "Game.h"
 // fixed settings
 constexpr char love_img_path[] = "./assets/image/love.png";
 constexpr int love_img_padding = 5;
 constexpr int tower_img_left_padding = 30;
 constexpr int tower_img_top_padding = 30;
-
-void UI::init()
+int ball_count = 0;
+void UI::init(Game *game)
 {
 	DataCenter *DC = DataCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
+	this->game = game;
 	love = IC->get(love_img_path);
 	int tl_x = DC->game_field_length + tower_img_left_padding;
 	int tl_y = tower_img_top_padding;
@@ -49,6 +51,8 @@ void UI::init()
 	state = STATE::HALT;
 	on_item = -1;
 }
+
+#include <allegro5/allegro_video.h>
 
 void UI::update()
 {
@@ -99,6 +103,7 @@ void UI::update()
 				}
 				DC->player->coin -= 50;
 				DC->balls.emplace_back(Ball::create_ball(BallState::Normal));
+				ball_count++;
 			}
 			if (on_item == 1)
 			{
@@ -135,6 +140,7 @@ void UI::update()
 				}
 				DC->player->coin -= 200;
 				DC->balls.emplace_back(Ball::create_ball(BallState::BIG));
+				ball_count++;
 			}
 			if (on_item == 4)
 			{
@@ -142,15 +148,16 @@ void UI::update()
 				{
 					break;
 				}
-				// 替換為你的 MP4 檔案路徑
-				const char *filePath = "./assets/sound/WIN_VIDEO.mp4";
-
-				// 使用系統預設播放器開啟
-				std::string command = "start ";
-				command += filePath;
-
-				// 執行命令
-				std::system(command.c_str());
+				DC->player->coin -= 1000000;
+				Ball::speed = 1;
+				Ball::buy_damage = 1;
+				for (auto &ball : DC->balls)
+				{
+					delete ball;
+				}
+				DC->balls.clear();
+				ball_count = 0;
+				this->game->end_game();
 			}
 		}
 		break;
@@ -184,6 +191,10 @@ void UI::draw()
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
 		0, love_img_padding * 3,
 		ALLEGRO_ALIGN_LEFT, "damage: %3d", Ball::buy_damage);
+	al_draw_textf(
+		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+		0, love_img_padding * 6,
+		ALLEGRO_ALIGN_LEFT, "ball count: %3d", ball_count);
 	// draw tower shop items
 	for (auto &[bitmap, p, price] : tower_items)
 	{

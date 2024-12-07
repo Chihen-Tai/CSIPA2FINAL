@@ -3,7 +3,7 @@
 // fixed settings
 namespace PlayerSetting {
 	constexpr int init_HP = -1;
-	constexpr int init_coin = 1000000;
+	constexpr int init_coin = 100000000;
 	constexpr int coin_freq = 0;
 	constexpr int coin_increase = 0;
 };
