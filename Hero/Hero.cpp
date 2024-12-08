@@ -119,7 +119,7 @@ Hero_Bullet *Hero::create_bullet(Object *target)
     DataCenter *DC = DataCenter::get_instance();
     const Point &p = Point(shape->center_x(), shape->center_y());
     const Point &t = DC->mouse;
-    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path, 150, 1, 1000);
+    return new Hero_Bullet(p, t, HeroSetting::hero_bullet_img_path);
 }
 
 bool Hero::attack(Object *target)

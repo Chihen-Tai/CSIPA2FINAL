@@ -6,13 +6,14 @@
 #include <algorithm>
 #include <allegro5/bitmap_draw.h>
 
-Hero_Bullet::Hero_Bullet(const Point &p, const Point &target, const std::string &path, double v, int dmg, double fly_dist )
+Hero_Bullet::Hero_Bullet(const Point &p, const Point &target, const std::string &path)
 {
 	ImageCenter *IC = ImageCenter::get_instance();
-	this->fly_dist = 100;
-	this->dmg = 1;
+	this->fly_dist = get_fly_dist();
+	this->dmg = get_dmg();
+	this->v=get_v();
 	bitmap = IC->get(path);
-	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.8;
+	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.2;
 	shape.reset(new Circle{p.x, p.y, r});
 	double d = Point::dist(p, target);
 	vx = (target.x - p.x) / d * v;

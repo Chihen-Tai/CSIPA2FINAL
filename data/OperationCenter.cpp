@@ -53,6 +53,8 @@ void OperationCenter::_update_towerBullet() {
 	for(size_t i = 0; i < towerBullets.size(); ++i) {
 		if(towerBullets[i]->get_fly_dist() <= 0) {
 			towerBullets.erase(towerBullets.begin()+i);
+			delete towerBullets[i];
+			towerBullets.erase(towerBullets.begin() + i);
 			--i;
 		}
 	}

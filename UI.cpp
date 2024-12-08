@@ -185,16 +185,20 @@ void UI::draw()
 		ALLEGRO_ALIGN_LEFT, "coin: %5d", player_coin);
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-		0, love_img_padding * 10,
+		0, love_img_padding * 5,
 		ALLEGRO_ALIGN_LEFT, "speed: %.4lf", Ball::speed);
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-		0, love_img_padding * 3,
+		0, love_img_padding * 10,
 		ALLEGRO_ALIGN_LEFT, "damage: %3d", Ball::buy_damage);
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-		0, love_img_padding * 6,
+		0, love_img_padding * 15,
 		ALLEGRO_ALIGN_LEFT, "ball count: %3d", ball_count);
+	al_draw_textf(
+		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
+		0, love_img_padding ,
+		ALLEGRO_ALIGN_LEFT, "level: %3d", DC->level->get_level());
 	// draw tower shop items
 	for (auto &[bitmap, p, price] : tower_items)
 	{

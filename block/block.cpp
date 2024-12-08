@@ -42,9 +42,10 @@ void Block::update()
     std::vector<Hero_Bullet*> &heroBullets = DC->heroBullets;
     for(size_t i=0;i<heroBullets.size();++i)
     {
-        if(heroBullets[i]->shape->overlap(*(shape)) && exist)
+        if(heroBullets[i]->shape->overlap(*(this->shape)) && exist)
         {
             hp-=heroBullets[i]->get_dmg();
+            delete heroBullets[i];
             heroBullets.erase(heroBullets.begin()+i);
             --i;
             DC->player->coin+=1;

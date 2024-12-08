@@ -28,6 +28,7 @@ public:
 	}
 	Circle grid_to_region(const Point &grid, const int &r) const;
 	int total_blocks;
+	int get_level() const { return now_level; }
 private:
 	/**
 	 * @brief Stores the monster's attack route, whose Point is represented in grid format.
