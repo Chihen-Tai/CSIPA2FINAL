@@ -35,11 +35,12 @@ void Hero::init()
         gifPath[static_cast<HeroState>(type)] = std::string(buffer);
     }
     GIFCenter *GIFC = GIFCenter::get_instance();
+    //DataCenter *DC = DataCenter::get_instance();
     // see Monster.cpp 148
     ALGIF_ANIMATION *gif = GIFC->get(gifPath[HeroState::FRONT]);
     shape.reset(new Rectangle{
-        0,
-        0,
+        1280-gif->width,
+        800,
         gif->width,
         gif->height});
 }

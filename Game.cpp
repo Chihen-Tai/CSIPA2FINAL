@@ -224,7 +224,7 @@ bool Game::game_update()
 			if (DC->key_state[ALLEGRO_KEY_ESCAPE] && !DC->prev_key_state[ALLEGRO_KEY_ESCAPE])
 			{
 				debug_log("<Game> state: change to END\n");
-				state = STATE::END;
+				return false;
 			}
 			break;
 		}
