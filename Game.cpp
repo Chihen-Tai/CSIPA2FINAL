@@ -369,9 +369,13 @@ void Game::game_draw()
 		al_draw_text(
 			FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
 			DC->window_width / 2., DC->window_height / 2.,
-			ALLEGRO_ALIGN_CENTRE, "YOU WIN");
+			ALLEGRO_ALIGN_CENTRE, "YOU WIN!");
+		al_draw_textf(
+			FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
+			DC->window_width / 2., DC->window_height / 2. + 50,
+			ALLEGRO_ALIGN_CENTRE, "Score: %d", DC->player->coin);
 		al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-					 DC->window_width / 2., DC->window_height / 2. + 50,
+					 DC->window_width / 2., DC->window_height / 2. +100,
 					 ALLEGRO_ALIGN_CENTRE, "Press enter to exit");
 	}
 	}

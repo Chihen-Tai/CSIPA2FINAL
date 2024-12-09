@@ -10,7 +10,6 @@ Hero_Bullet::Hero_Bullet(const Point &p, const Point &target, const std::string 
 {
 	ImageCenter *IC = ImageCenter::get_instance();
 	this->fly_dist = get_fly_dist();
-	this->dmg = get_dmg();
 	this->v=get_v();
 	bitmap = IC->get(path);
 	double r = std::min(al_get_bitmap_width(bitmap), al_get_bitmap_height(bitmap)) * 0.2;

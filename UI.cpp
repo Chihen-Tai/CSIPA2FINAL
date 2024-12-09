@@ -3,6 +3,7 @@
 #include "data/DataCenter.h"
 #include "data/ImageCenter.h"
 #include "data/FontCenter.h"
+#include "data/SoundCenter.h"
 #include <algorithm>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
@@ -18,6 +19,8 @@
 #include "Game.h"
 // fixed settings
 constexpr char love_img_path[] = "./assets/image/love.png";
+constexpr char success_sound_path[] = "./assets/sound/success.mp3";
+constexpr char fail_sound_path[] = "./assets/sound/fail.mp3";
 constexpr int love_img_padding = 5;
 constexpr int tower_img_left_padding = 30;
 constexpr int tower_img_top_padding = 30;
@@ -58,7 +61,7 @@ void UI::update()
 {
 	DataCenter *DC = DataCenter::get_instance();
 	const Point &mouse = DC->mouse;
-
+	SoundCenter *SC = SoundCenter::get_instance();
 	switch (state)
 	{
 	case STATE::HALT:
@@ -99,8 +102,10 @@ void UI::update()
 			{
 				if (DC->player->coin < 50)
 				{
+					SC->play(fail_sound_path, ALLEGRO_PLAYMODE_ONCE);
 					break;
 				}
+				SC->play(success_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				DC->player->coin -= 50;
 				DC->balls.emplace_back(Ball::create_ball(BallState::Normal));
 				ball_count++;
@@ -109,8 +114,10 @@ void UI::update()
 			{
 				if (DC->player->coin < 100)
 				{
+					SC->play(fail_sound_path, ALLEGRO_PLAYMODE_ONCE);
 					break;
 				}
+				SC->play(success_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				DC->player->coin -= 100;
 				Ball::speed *= 1.1;
 				for (auto &ball : DC->balls)
@@ -123,8 +130,10 @@ void UI::update()
 			{
 				if (DC->player->coin < 150)
 				{
+					SC->play(fail_sound_path, ALLEGRO_PLAYMODE_ONCE);
 					break;
 				}
+				SC->play(success_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				DC->player->coin -= 150;
 				Ball::buy_damage += 1;
 				for (auto &ball : DC->balls)
@@ -136,8 +145,10 @@ void UI::update()
 			{
 				if (DC->player->coin < 200)
 				{
+					SC->play(fail_sound_path, ALLEGRO_PLAYMODE_ONCE);
 					break;
 				}
+				SC->play(success_sound_path, ALLEGRO_PLAYMODE_ONCE);
 				DC->player->coin -= 200;
 				DC->balls.emplace_back(Ball::create_ball(BallState::BIG));
 				ball_count++;
@@ -146,9 +157,11 @@ void UI::update()
 			{
 				if (DC->player->coin < 1000000)
 				{
+					SC->play(fail_sound_path, ALLEGRO_PLAYMODE_ONCE);
 					break;
 				}
-				DC->player->coin -= 1000000;
+				SC->play(success_sound_path, ALLEGRO_PLAYMODE_ONCE);
+				// DC->player->coin -= 1000000;
 				Ball::speed = 1;
 				Ball::buy_damage = 1;
 				for (auto &ball : DC->balls)
@@ -182,7 +195,7 @@ void UI::draw()
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
 		game_field_length + love_img_padding, love_img_padding,
-		ALLEGRO_ALIGN_LEFT, "coin: %5d", player_coin);
+		ALLEGRO_ALIGN_LEFT, "scores: %5d", player_coin);
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
 		0, love_img_padding * 5,
@@ -197,7 +210,7 @@ void UI::draw()
 		ALLEGRO_ALIGN_LEFT, "ball count: %3d", ball_count);
 	al_draw_textf(
 		FC->courier_new[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-		0, love_img_padding ,
+		0, love_img_padding,
 		ALLEGRO_ALIGN_LEFT, "level: %3d", DC->level->get_level());
 	// draw tower shop items
 	for (auto &[bitmap, p, price] : tower_items)

@@ -157,8 +157,15 @@ void OperationCenter::_update_heroBullet() {
 
 void OperationCenter::_update_block() {
 	std::vector<Block*> &blocks = DataCenter::get_instance()->blocks;
-	for(Block *block : blocks)
-		block->update();
+	for(auto it = blocks.begin(); it != blocks.end(); ) {
+		(*it)->update();
+		if((*it)->get_exist() == false) {
+			delete *it;
+			it = blocks.erase(it);
+		} else {
+			++it;
+		}
+	}
 	//std::cout<<"update block"<<std::endl;
 }
 

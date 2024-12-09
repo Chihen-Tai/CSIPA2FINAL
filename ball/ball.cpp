@@ -169,8 +169,15 @@ void Ball::update()
                     vy = -vy;
                     shape->update_center_y(shape->center_y() + (dy > 0 ? overlapY : -overlapY));
                 }
+                if(getDamage()>=block->get_hp())
+                {
+                    DC->player->coin+=block->get_hp();
+                }
+                else
+                {
+                    DC->player->coin+=getDamage();
+                }
                 block->set_hp(block->get_hp() - getDamage());
-                DC->player->coin += damage;
                 play_sound = true;
             }
         }
@@ -185,7 +192,6 @@ void Ball::update()
 
 void Ball::draw()
 {
-
     al_draw_filled_circle(
         shape->center_x(),
         shape->center_y(),

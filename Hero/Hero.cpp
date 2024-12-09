@@ -21,7 +21,7 @@ namespace HeroSetting
     static constexpr char hero_bullet_img_path[] = {
         "./assets/image/tower/Arcane_Beam.png",
     };
-    constexpr char attack_sound_path[] = "./assets/sound/Arrow.wav";
+    constexpr char attack_sound_path[] = "./assets/sound/shoot.mp3";
 }
 void Hero::init()
 {
@@ -53,33 +53,10 @@ void Hero::draw()
         shape->center_x() - gif->width / 2,
         shape->center_y() - gif->height / 2, 0);
 } 
-// double top()
-// {   
-//     GIFCenter *GIFC = GIFCenter::get_instance();
-//     ALGIF_ANIMATION *gif = GIFC->get(gifPath[state]);
-//     return shape->center_y() - gif->height() / 2;
-// }
-// double bottom()
-// {
-//     return shape->center_y() + gif->height() / 2;
-// }
-// double left()
-// {
-//     return shape->center_x() - gif->width() / 2;
-// }
-// double right()
-// {
-//     return shape->center_x() + gif->width() / 2;
-// }
 void Hero::update()
 {
     DataCenter *DC = DataCenter::get_instance();
-    // std::cout <<"top"<<shape->top()<<std::endl;
-    // std::cout <<"bottom"<<shape->bottom()<<std::endl;
-    // std::cout <<"left"<<shape->left()<<std::endl;
-    // std::cout <<"right"<<shape->right()<<std::endl;
-    // std::cout <<"window_height"<<DC->window_height<<std::endl;
-    // std::cout <<"window_width"<<DC->window_width<<std::endl;
+    SoundCenter *SC = SoundCenter::get_instance();
     if (DC->key_state[ALLEGRO_KEY_W] )
     {
         shape->update_center_y(shape->center_y() - speed);
@@ -110,9 +87,12 @@ void Hero::update()
     }
     if (counter == 0)
     {
-        attack(nullptr); // 3 seconds delay (assuming 60 FPS)
+    SC->play(HeroSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
+    attack(nullptr); // First shot
+    counter = 20; // Reset counter for 3 seconds delay (assuming 60 FPS)
     }
 }
+
 
 Hero_Bullet *Hero::create_bullet(Object *target)
 {
@@ -124,11 +104,7 @@ Hero_Bullet *Hero::create_bullet(Object *target)
 
 bool Hero::attack(Object *target)
 {
-    //std::cout<<"attack"<<std::endl;
-    SoundCenter *SC = SoundCenter::get_instance();
-    SC->play(HeroSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
     DataCenter *DC = DataCenter::get_instance();
     DC->heroBullets.emplace_back(create_bullet(target));
-    counter = 18; // 0.3 seconds delay (assuming 60 FPS)
     return true;
 }
