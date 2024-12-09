@@ -23,7 +23,7 @@
 // fixed settings
 constexpr char main_menu_img_path[] = "./assets/image/menu_game.png";
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
-constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
+constexpr char game_start_sound_path[] = "./assets/sound/start.mp3";
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
 constexpr char background_sound_path[] = "./assets/sound/bossfight.mp3";
 
@@ -179,7 +179,10 @@ bool Game::game_update()
 		static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
 		if (!is_played)
 		{
-			instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
+			for(int i=0;i<5;i++)
+			{
+				instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
+			}
 			DC->level->init();
 			DC->level->load_level(1);
 			ui = new UI();
@@ -233,6 +236,7 @@ bool Game::game_update()
 
 		if (!BGM_played)
 		{
+			
 			background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP);
 			BGM_played = true;
 		}

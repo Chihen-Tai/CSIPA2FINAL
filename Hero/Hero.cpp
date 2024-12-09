@@ -21,7 +21,7 @@ namespace HeroSetting
     static constexpr char hero_bullet_img_path[] = {
         "./assets/image/tower/Arcane_Beam.png",
     };
-    constexpr char attack_sound_path[] = "./assets/sound/shoot.mp3";
+    constexpr char attack_sound_path[] = "./assets/sound/shoot2.mp3";
 }
 void Hero::init()
 {
@@ -81,13 +81,32 @@ void Hero::update()
         state = HeroState::RIGHT;
        
     }
+    if(shape->center_x() < 0)
+    {
+        shape->update_center_x(DC->window_width);
+    }
+    if(shape->center_x() > DC->window_width)
+    {
+        shape->update_center_x(0);
+    }
+    if(shape->center_y() < 0)
+    {
+        shape->update_center_y(DC->window_height);
+    }
+    if(shape->center_y() > DC->window_height)
+    {
+        shape->update_center_y(0);
+    }
     if (counter > 0)
     {
         counter--;
     }
     if (counter == 0)
     {
-    SC->play(HeroSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
+    for(int i=0;i<5;i++)
+    {
+        SC->play(HeroSetting::attack_sound_path, ALLEGRO_PLAYMODE_ONCE);
+    }
     attack(nullptr); // First shot
     counter = 20; // Reset counter for 3 seconds delay (assuming 60 FPS)
     }
