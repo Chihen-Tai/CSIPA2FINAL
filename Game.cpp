@@ -26,6 +26,7 @@ constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/start.mp3";
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
 constexpr char background_sound_path[] = "./assets/sound/bossfight.mp3";
+constexpr char end_background_sound_path[] = "./assets/sound/ymniam.wav";
 
 /**
  * @brief Game entry.
@@ -261,6 +262,10 @@ bool Game::game_update()
 	}
 	case STATE::END:
 	{
+		if(!end_BGM_played){
+			end_background = SC->play(end_background_sound_path, ALLEGRO_PLAYMODE_LOOP);
+			end_BGM_played = true;
+		}
 		if(DC->key_state[ALLEGRO_KEY_ENTER] && !DC->prev_key_state[ALLEGRO_KEY_ENTER])
 		{
 			// delete ui;
