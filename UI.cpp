@@ -170,6 +170,7 @@ void UI::update()
 				}
 				DC->balls.clear();
 				ball_count = 0;
+				//SC->toggle_playing(DC->background);
 				this->game->end_game();
 			}
 		}

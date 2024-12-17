@@ -45,7 +45,7 @@ void Block::update()
     {
         if(heroBullets[i]->shape->overlap(*(this->shape)) && exist)
         {
-             DC->player->coin+=hp;
+            DC->player->coin+=hp;
             hp=0;
             delete heroBullets[i];
             heroBullets.erase(heroBullets.begin()+i);

@@ -2,6 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
 #include "ball/Ball.h"
 #include "UI.h"
 
@@ -9,6 +10,8 @@
  * @brief Main class that runs the whole game.
  * @details All game procedures must be processed through this class.
  */
+
+typedef struct ALGIF_ANIMATION ALGIF_ANIMATION;
 class Game
 {
 public:
@@ -37,6 +40,7 @@ private:
 	ALLEGRO_BITMAP *game_icon;
 	ALLEGRO_BITMAP *background;
 	ALLEGRO_BITMAP *start;
+	ALGIF_ANIMATION *end;
 private:
 	ALLEGRO_DISPLAY *display;
 	ALLEGRO_TIMER *timer;

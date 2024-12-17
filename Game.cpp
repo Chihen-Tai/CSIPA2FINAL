@@ -5,6 +5,7 @@
 #include "data/SoundCenter.h"
 #include "data/ImageCenter.h"
 #include "data/FontCenter.h"
+#include "data/GIFCenter.h"
 #include "Player.h"
 #include "Level.h"
 
@@ -26,7 +27,8 @@ constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/start.mp3";
 constexpr char background_img_path[] = "./assets/image/StartBackground.png";
 constexpr char background_sound_path[] = "./assets/sound/bossfight.mp3";
-
+constexpr char end_background_sound_path[] = "./assets/sound/123.mp3";
+constexpr char end_gif[] = "./assets/gif/rick.gif";
 /**
  * @brief Game entry.
  * @details The function processes all allegro events and update the event state to a generic data storage (i.e. DataCenter).
@@ -134,6 +136,7 @@ void Game::game_init()
 	SoundCenter *SC = SoundCenter::get_instance();
 	ImageCenter *IC = ImageCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
+	GIFCenter *GC = GIFCenter::get_instance();
 	// set window icon
 	game_icon = IC->get(game_icon_img_path);
 	al_set_display_icon(display, game_icon);
@@ -153,6 +156,7 @@ void Game::game_init()
 	// game start
 	background = IC->get(background_img_path);
 	start = IC->get(main_menu_img_path);
+	end = GC->get(end_gif);
 	debug_log("Game state: change to START\n");
 	state = STATE::START_MENU;
 	al_start_timer(timer);
@@ -179,7 +183,7 @@ bool Game::game_update()
 		static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
 		if (!is_played)
 		{
-			for(int i=0;i<5;i++)
+			for (int i = 0; i < 5; i++)
 			{
 				instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
 			}
@@ -201,6 +205,7 @@ bool Game::game_update()
 	case STATE::START:
 	{
 		static bool is_played = false;
+		BGM_played = false;
 		static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
 		if (!is_played)
 		{
@@ -218,7 +223,8 @@ bool Game::game_update()
 	}
 	case STATE::LEVEL:
 	{
-		if (inMenu) {
+		if (inMenu)
+		{
 			if (DC->key_state[ALLEGRO_KEY_ENTER] && !DC->prev_key_state[ALLEGRO_KEY_ENTER])
 			{
 				inMenu = false;
@@ -232,11 +238,9 @@ bool Game::game_update()
 			break;
 		}
 
-		
-
 		if (!BGM_played)
 		{
-			
+
 			background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP);
 			BGM_played = true;
 		}
@@ -261,24 +265,32 @@ bool Game::game_update()
 	}
 	case STATE::END:
 	{
-		if(DC->key_state[ALLEGRO_KEY_ENTER] && !DC->prev_key_state[ALLEGRO_KEY_ENTER])
+		static bool end_sound_play = false;
+		static ALLEGRO_SAMPLE_INSTANCE *end_background = nullptr;
+		if (!end_sound_play)
 		{
-			// delete ui;
-			// ui = new UI();
-			// ui->init(this);
-			// DC->level->init();
-			// DC->player->coin = 100000000;
-			// DC->hero->init();
-			// for(auto &block:DC->blocks)
-			// {
-			// 	delete block;
-			// }
-			// DC->blocks.clear();
-			// SC->toggle_playing(background);
-			// inMenu = true;
-			// debug_log("<Game> state: change to START\n");
-			//state = STATE::START;
-			return false;
+			SC->toggle_playing(background);
+			end_background = SC->play(end_background_sound_path, ALLEGRO_PLAYMODE_ONCE);
+			end_sound_play = true;
+		}
+		if (DC->key_state[ALLEGRO_KEY_ENTER] && !DC->prev_key_state[ALLEGRO_KEY_ENTER])
+		{
+			delete ui;
+			ui = new UI();
+			SC->toggle_playing(end_background);
+			ui->init(this);
+			DC->level->init();
+			DC->player->coin = 100;
+			DC->hero->init();
+			for (auto &block : DC->blocks)
+			{
+				delete block;
+			}
+			DC->blocks.clear();
+			inMenu = true;
+			debug_log("<Game> state: change to START\n");
+			state = STATE::START;
+			// return false;
 		}
 	}
 	}
@@ -327,7 +339,7 @@ void Game::game_draw()
 		al_draw_text(
 			FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
 			DC->window_width / 2., DC->window_height / 2. + 100,
-			ALLEGRO_ALIGN_CENTRE, "Press esc to exit");
+			ALLEGRO_ALIGN_CENTRE, "Press esc to	exit");
 	}
 	if (state == STATE::LEVEL)
 	{
@@ -368,19 +380,24 @@ void Game::game_draw()
 	}
 	case STATE::END:
 	{
+		// game layout cover
+		algif_draw_gif(
+		end,
+		DC->window_width / 2- end->width / 2,
+		DC->window_height / 2 - end->height / 2, 0);
+
 		if (!inMenu)
-			al_draw_bitmap(background, 0, 0, 0);
 		al_draw_text(
 			FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
-			DC->window_width / 2., DC->window_height / 2.,
+			DC->window_width / 2., DC->window_height / -200.,
 			ALLEGRO_ALIGN_CENTRE, "YOU WIN!");
 		al_draw_textf(
 			FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
-			DC->window_width / 2., DC->window_height / 2. + 50,
+			DC->window_width / 2., DC->window_height /2-250,
 			ALLEGRO_ALIGN_CENTRE, "Score: %d", DC->player->coin);
 		al_draw_text(FC->caviar_dreams[FontSize::MEDIUM], al_map_rgb(0, 0, 0),
-					 DC->window_width / 2., DC->window_height / 2. +100,
-					 ALLEGRO_ALIGN_CENTRE, "Press enter to exit");
+					 DC->window_width / 2., DC->window_height /2 - 300,
+					 ALLEGRO_ALIGN_CENTRE, "Press enter to main menu");
 	}
 	}
 	al_flip_display();
