@@ -29,7 +29,7 @@ void Hero::init()
     {
         char buffer[50];
         sprintf(
-            buffer, "%s/dragonite_%s.gif", // print the string to buffer
+            buffer, "%s/dragonite1_%s.gif", // print the string to buffer
             HeroSetting::gif_root_path,
             HeroSetting::gid_postfix[static_cast<int>(type)]);
         gifPath[static_cast<HeroState>(type)] = std::string(buffer);
